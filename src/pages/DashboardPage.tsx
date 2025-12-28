@@ -8,7 +8,7 @@ import { useDashboardStore } from '../stores/useDashboardStore';
 import { StatCard } from '../components/dashboard/StatCard';
 import { RecentActivityList } from '../components/dashboard/RecentActivityList';
 import { QuickActions } from '../components/dashboard/QuickActions';
-import { AlertsWidget } from '../components/dashboard/AlertsWidget';
+import AlertsWidget from '../components/dashboard/AlertsWidget';
 import { useThemeColors } from '../hooks/useThemeColors';
 
 export function DashboardPage() {
