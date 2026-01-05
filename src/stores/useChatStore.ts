@@ -102,7 +102,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   },
 
   // Envoyer un message à M.A.X.
-  sendMessage: async (message: string, useStreaming = true) => {
+  sendMessage: async (message: string, useStreaming = false) => {
     if (!message.trim()) {
       throw new Error('Le message ne peut pas être vide');
     }
