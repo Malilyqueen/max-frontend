@@ -8,11 +8,18 @@ import { motion } from 'framer-motion';
 import { AlertTriangle, Clock, CheckCircle, XCircle, FileText } from 'lucide-react';
 import { useThemeColors } from '../../hooks/useThemeColors';
 
+interface Operation {
+  type: string;
+  description: string;
+  details: Record<string, any>;
+}
+
 interface ConsentCardProps {
   consentId: string;
-  operation: string;
+  operation: Operation;
   expiresIn: number; // seconds
-  onApprove: (consentId: string) => Promise<void>;
+  sessionId?: string;
+  onExecuteComplete?: (result: any) => void;
   onViewAudit?: (consentId: string) => void;
 }
 
@@ -20,7 +27,8 @@ export const ConsentCard: React.FC<ConsentCardProps> = ({
   consentId,
   operation,
   expiresIn,
-  onApprove,
+  sessionId,
+  onExecuteComplete,
   onViewAudit
 }) => {
   const colors = useThemeColors();
@@ -28,6 +36,8 @@ export const ConsentCard: React.FC<ConsentCardProps> = ({
   const [status, setStatus] = useState<'pending' | 'executing' | 'success' | 'error' | 'expired'>('pending');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [hasAuditReport, setHasAuditReport] = useState(false);
+  const [resultMessage, setResultMessage] = useState<string | null>(null);
+  const [showDetails, setShowDetails] = useState(false);
 
   // Countdown timer
   useEffect(() => {
@@ -52,9 +62,33 @@ export const ConsentCard: React.FC<ConsentCardProps> = ({
     setErrorMessage(null);
 
     try {
-      await onApprove(consentId);
+      // POST direct à /api/consent/execute/:consentId
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/consent/execute/${consentId}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Tenant': 'macrea-admin'
+          },
+          body: JSON.stringify({ sessionId })
+        }
+      );
+
+      const data = await response.json();
+
+      if (!data.success) {
+        throw new Error(data.error || 'Échec de l\'exécution');
+      }
+
       setStatus('success');
       setHasAuditReport(true);
+      setResultMessage(data.result?.message || 'Opération exécutée avec succès');
+
+      // Callback avec résultat complet
+      if (onExecuteComplete) {
+        onExecuteComplete(data);
+      }
     } catch (error: any) {
       setStatus('error');
       setErrorMessage(error.message || 'Erreur lors de l\'exécution');
@@ -124,10 +158,28 @@ export const ConsentCard: React.FC<ConsentCardProps> = ({
             {getStatusText()}
           </h4>
           <p className="text-sm" style={{ color: colors.textSecondary }}>
-            {operation}
+            {operation.description}
           </p>
         </div>
       </div>
+
+      {/* Operation Details (collapsible) */}
+      {status === 'pending' && Object.keys(operation.details || {}).length > 0 && (
+        <div className="mb-3">
+          <button
+            onClick={() => setShowDetails(!showDetails)}
+            className="text-xs hover:underline"
+            style={{ color: colors.textTertiary }}
+          >
+            {showDetails ? 'Masquer' : 'Voir'} détails techniques
+          </button>
+          {showDetails && (
+            <pre className="mt-2 p-2 text-xs rounded overflow-x-auto" style={{ backgroundColor: colors.cardBg }}>
+              {JSON.stringify(operation.details, null, 2)}
+            </pre>
+          )}
+        </div>
+      )}
 
       {/* Countdown timer (only for pending) */}
       {status === 'pending' && (
@@ -136,6 +188,15 @@ export const ConsentCard: React.FC<ConsentCardProps> = ({
           <span className="text-sm font-mono" style={{ color: colors.textSecondary }}>
             Expire dans: <span style={{ color: getStatusColor() }}>{formatTime(timeLeft)}</span>
           </span>
+        </div>
+      )}
+
+      {/* Success message */}
+      {status === 'success' && resultMessage && (
+        <div className="mb-3 p-3 rounded" style={{ backgroundColor: 'rgba(76, 175, 80, 0.1)' }}>
+          <p className="text-sm" style={{ color: 'rgb(76, 175, 80)' }}>
+            {resultMessage}
+          </p>
         </div>
       )}
 
