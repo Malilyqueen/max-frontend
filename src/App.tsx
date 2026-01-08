@@ -13,6 +13,9 @@ import { CrmPage } from './pages/CrmPage';
 import { AutomationPage } from './pages/AutomationPage';
 import { ReportingPage } from './pages/ReportingPage';
 import { MaxPage } from './pages/MaxPage';
+import { ActivityDashboardPage } from './pages/ActivityDashboardPage';
+import { CampaignsPage } from './pages/CampaignsPage';
+import { SettingsPage } from './pages/SettingsPage';
 import { ToastContainer } from './components/Toast';
 import { useToastStore } from './hooks/useToast';
 
@@ -27,17 +30,22 @@ export default function App() {
 
         {/* Routes protégées */}
         <Route element={<ProtectedRoute />}>
-          <Route element={<AppShell />}>
-            {/* Redirect / vers /dashboard */}
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route path="/" element={<AppShell />}>
+            {/* Redirect root vers /dashboard */}
+            <Route index element={<Navigate to="/dashboard" replace />} />
 
             {/* Pages principales MVP1 - Phase 1 complète */}
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/chat" element={<ChatPage />} />
             <Route path="/crm" element={<CrmPage />} />
+            <Route path="/activite" element={<ActivityDashboardPage />} />
+            <Route path="/campagnes" element={<CampaignsPage />} />
             <Route path="/automation" element={<AutomationPage />} />
             <Route path="/reporting" element={<ReportingPage />} />
             <Route path="/max" element={<MaxPage />} />
+
+            {/* Phase 2 - Settings */}
+            <Route path="/settings/integrations" element={<SettingsPage />} />
           </Route>
         </Route>
 
