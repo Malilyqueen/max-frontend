@@ -4,23 +4,23 @@
  */
 
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { LoginPage } from './pages/LoginPage.tsx';
-import { ProtectedRoute } from './components/ProtectedRoute.tsx';
-import { AppShellSimple as AppShell } from './pages/AppShellSimple.tsx';
-import { ChatPage } from './pages/ChatPage.tsx';
-import { DashboardPage } from './pages/DashboardPage.tsx';
-import { CrmPage } from './pages/CrmPage.tsx';
-import { AutomationPage } from './pages/AutomationPage.tsx';
-import { ActivityDashboardPage } from './pages/ActivityDashboardPage.tsx';
-import { CampaignsPage } from './pages/CampaignsPage.tsx';
-import { ReportingPage } from './pages/ReportingPage.tsx';
-import { MaxPage } from './pages/MaxPage.tsx';
-import { SupportPage } from './pages/SupportPage.tsx';
-import { TicketDetailPage } from './pages/TicketDetailPage.tsx';
-import { AdminSupportPage } from './pages/AdminSupportPage.tsx';
-import { SettingsPage } from './pages/SettingsPage.tsx';
-import { ToastContainer } from './components/Toast.tsx';
-import { useToastStore } from './hooks/useToast.ts';
+import { LoginPage } from './pages/LoginPage';
+import { ProtectedRoute } from './components/ProtectedRoute';
+import { AppShellSimple as AppShell } from './pages/AppShellSimple';
+import { ChatPage } from './pages/ChatPage';
+import { DashboardPage } from './pages/DashboardPage';
+import { CrmPage } from './pages/CrmPage';
+import { AutomationPage } from './pages/AutomationPage';
+import { ActivityDashboardPage } from './pages/ActivityDashboardPage';
+import { CampaignsPage } from './pages/CampaignsPage';
+import { ReportingPage } from './pages/ReportingPage';
+import { MaxPage } from './pages/MaxPage';
+import { SupportPage } from './pages/SupportPage';
+import { TicketDetailPage } from './pages/TicketDetailPage';
+import { AdminSupportPage } from './pages/AdminSupportPage';
+import { SettingsPage } from './pages/SettingsPage';
+import { ToastContainer } from './components/Toast';
+import { useToastStore } from './hooks/useToast';
 
 export default function App() {
   const { toasts, removeToast } = useToastStore();
