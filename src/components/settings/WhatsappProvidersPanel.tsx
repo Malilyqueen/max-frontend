@@ -10,7 +10,7 @@ import { ProviderForm } from './ProviderForm';
 import { ProviderCard } from './ProviderCard';
 import { getProvidersByChannel } from '../../types/providers';
 import type { Provider } from '../../types/providers';
-import toast from 'react-hot-toast';
+import { useToast } from '../../hooks/useToast';
 
 export function WhatsappProvidersPanel() {
   const {
@@ -20,6 +20,7 @@ export function WhatsappProvidersPanel() {
     skipChannel,
     unskipChannel
   } = useProvidersStore();
+  const toast = useToast();
 
   const [showForm, setShowForm] = useState(false);
   const [editingProvider, setEditingProvider] = useState<Provider | undefined>(undefined);

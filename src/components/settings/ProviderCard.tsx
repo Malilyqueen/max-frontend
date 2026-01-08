@@ -7,7 +7,7 @@ import { useState } from 'react';
 import type { Provider } from '../../types/providers';
 import { PROVIDER_METADATA } from '../../types/providers';
 import { useProvidersStore } from '../../stores/useProvidersStore';
-import toast from 'react-hot-toast';
+import { useToast } from '../../hooks/useToast';
 
 interface ProviderCardProps {
   provider: Provider;
@@ -16,6 +16,7 @@ interface ProviderCardProps {
 
 export function ProviderCard({ provider, onEdit }: ProviderCardProps) {
   const { deleteProvider, updateProvider, testConnection } = useProvidersStore();
+  const toast = useToast();
   const [testing, setTesting] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [toggling, setToggling] = useState(false);

@@ -12,12 +12,13 @@ import { ProviderForm } from './ProviderForm';
 import { ProviderCard } from './ProviderCard';
 import { getProvidersByChannel } from '../../types/providers';
 import type { Provider } from '../../types/providers';
-import toast from 'react-hot-toast';
+import { useToast } from '../../hooks/useToast';
 
 type EmailMode = 'default' | 'custom_domain' | 'self_service';
 
 export function EmailProvidersPanel() {
   const { providers, fetchProviders } = useProvidersStore();
+  const toast = useToast();
   const [mode, setMode] = useState<EmailMode>('default');
   const [showForm, setShowForm] = useState(false);
   const [editingProvider, setEditingProvider] = useState<Provider | undefined>(undefined);

@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 import { useProvidersStore } from '../../stores/useProvidersStore';
 import type { ProviderType, Provider } from '../../types/providers';
 import { PROVIDER_METADATA } from '../../types/providers';
-import toast from 'react-hot-toast';
+import { useToast } from '../../hooks/useToast';
 
 interface ProviderFormProps {
   providerType: ProviderType;
@@ -23,6 +23,7 @@ export function ProviderForm({
   onSuccess
 }: ProviderFormProps) {
   const { createProvider, updateProvider, saving } = useProvidersStore();
+  const toast = useToast();
 
   const isEditMode = !!existingProvider;
   const metadata = PROVIDER_METADATA[providerType];
