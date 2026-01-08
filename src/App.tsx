@@ -35,17 +35,17 @@ export default function App() {
             <Route index element={<Navigate to="/dashboard" replace />} />
 
             {/* Pages principales MVP1 - Phase 1 complète */}
-            <Route path="/dashboard" element={<DashboardPage />} />
-            <Route path="/chat" element={<ChatPage />} />
-            <Route path="/crm" element={<CrmPage />} />
-            <Route path="/activite" element={<ActivityDashboardPage />} />
-            <Route path="/campagnes" element={<CampaignsPage />} />
-            <Route path="/automation" element={<AutomationPage />} />
-            <Route path="/reporting" element={<ReportingPage />} />
-            <Route path="/max" element={<MaxPage />} />
+            <Route path="dashboard" element={<DashboardPage />} />
+            <Route path="chat" element={<ChatPage />} />
+            <Route path="crm" element={<CrmPage />} />
+            <Route path="activite" element={<ActivityDashboardPage />} />
+            <Route path="campagnes" element={<CampaignsPage />} />
+            <Route path="automation" element={<AutomationPage />} />
+            <Route path="reporting" element={<ReportingPage />} />
+            <Route path="max" element={<MaxPage />} />
 
             {/* Phase 2 - Settings */}
-            <Route path="/settings/integrations" element={<SettingsPage />} />
+            <Route path="settings/integrations" element={<SettingsPage />} />
           </Route>
         </Route>
 
