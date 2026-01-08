@@ -19,12 +19,13 @@ import { useToastStore } from './hooks/useToast';
 import { LoadingSpinner } from './components/common/LoadingSpinner';
 
 // Lazy load Phase 2 pages to avoid circular dependencies
-const ActivityDashboardPage = lazy(() => import('./pages/ActivityDashboardPage'));
-const CampaignsPage = lazy(() => import('./pages/CampaignsPage'));
-const SettingsPage = lazy(() => import('./pages/SettingsPage'));
-const SupportPage = lazy(() => import('./pages/SupportPage'));
-const TicketDetailPage = lazy(() => import('./pages/TicketDetailPage'));
-const AdminSupportPage = lazy(() => import('./pages/AdminSupportPage'));
+// Note: Using named exports, need to destructure
+const ActivityDashboardPage = lazy(() => import('./pages/ActivityDashboardPage').then(m => ({ default: m.ActivityDashboardPage })));
+const CampaignsPage = lazy(() => import('./pages/CampaignsPage').then(m => ({ default: m.CampaignsPage })));
+const SettingsPage = lazy(() => import('./pages/SettingsPage').then(m => ({ default: m.SettingsPage })));
+const SupportPage = lazy(() => import('./pages/SupportPage').then(m => ({ default: m.SupportPage })));
+const TicketDetailPage = lazy(() => import('./pages/TicketDetailPage').then(m => ({ default: m.TicketDetailPage })));
+const AdminSupportPage = lazy(() => import('./pages/AdminSupportPage').then(m => ({ default: m.AdminSupportPage })));
 
 // Loading fallback component
 const PageLoader = () => (
