@@ -4,7 +4,6 @@
  */
 
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
 import { LoginPage } from './pages/LoginPage';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { AppShellSimple as AppShell } from './pages/AppShellSimple';
@@ -20,35 +19,14 @@ import { SupportPage } from './pages/SupportPage';
 import { TicketDetailPage } from './pages/TicketDetailPage';
 import { AdminSupportPage } from './pages/AdminSupportPage';
 import { SettingsPage } from './pages/SettingsPage';
+import { ToastContainer } from './components/Toast';
+import { useToastStore } from './hooks/useToast';
 
 export default function App() {
+  const { toasts, removeToast } = useToastStore();
+
   return (
     <BrowserRouter>
-      {/* Toast notifications globales */}
-      <Toaster
-        position="top-right"
-        toastOptions={{
-          duration: 4000,
-          style: {
-            background: '#363636',
-            color: '#fff',
-          },
-          success: {
-            duration: 3000,
-            iconTheme: {
-              primary: '#10b981',
-              secondary: '#fff',
-            },
-          },
-          error: {
-            duration: 5000,
-            iconTheme: {
-              primary: '#ef4444',
-              secondary: '#fff',
-            },
-          },
-        }}
-      />
 
       <Routes>
         {/* Route publique: Login */}
@@ -79,6 +57,9 @@ export default function App() {
         {/* 404 */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+
+      {/* Toast notifications globales */}
+      <ToastContainer toasts={toasts} onClose={removeToast} />
     </BrowserRouter>
   );
 }
