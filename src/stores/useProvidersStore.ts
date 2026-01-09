@@ -13,6 +13,25 @@ import type {
   ChannelType
 } from '../types/providers';
 
+// ============================================================
+// SMS Settings Types
+// ============================================================
+
+export interface SmsConfig {
+  sms_mode: 'macrea' | 'self_service';
+  sms_sender_label: string | null;
+  sms_sender_id: string | null;
+  twilio_messaging_service_sid: string | null;
+  twilio_from_number: string | null;
+}
+
+export interface ValidateSenderResult {
+  suggested_id: string;
+  is_available: boolean;
+  base_id: string;
+  alternatives: string[];
+}
+
 interface ProvidersState {
   // ============================================================
   // Data
@@ -70,6 +89,15 @@ interface ProvidersState {
   // ============================================================
   clearSelectedProvider: () => void;
   clearTestResult: (id: number) => void;
+
+  // ============================================================
+  // Actions - SMS Settings
+  // ============================================================
+  smsConfig: SmsConfig | null;
+  loadingSms: boolean;
+  fetchSmsConfig: () => Promise<void>;
+  updateSmsConfig: (config: Partial<SmsConfig>) => Promise<void>;
+  validateSenderId: (label: string) => Promise<ValidateSenderResult>;
 }
 
 export const useProvidersStore = create<ProvidersState>((set, get) => ({
@@ -324,5 +352,62 @@ export const useProvidersStore = create<ProvidersState>((set, get) => ({
       delete newResults[id];
       return { testResults: newResults };
     });
+  },
+
+  // ============================================================
+  // SMS Settings
+  // ============================================================
+
+  smsConfig: null,
+  loadingSms: false,
+
+  fetchSmsConfig: async () => {
+    try {
+      set({ loadingSms: true });
+      const response: any = await apiClient.get('/settings/sms');
+      console.log('[ProvidersStore] SMS config fetched:', response.config);
+      set({
+        smsConfig: response.config,
+        loadingSms: false
+      });
+    } catch (error: any) {
+      console.error('[ProvidersStore] Erreur fetch SMS config:', error);
+      set({ loadingSms: false });
+      throw error;
+    }
+  },
+
+  updateSmsConfig: async (config: Partial<SmsConfig>) => {
+    try {
+      set({ loadingSms: true });
+      const response: any = await apiClient.put('/settings/sms', config);
+      console.log('[ProvidersStore] SMS config updated:', response.config);
+      set({
+        smsConfig: response.config,
+        loadingSms: false
+      });
+    } catch (error: any) {
+      console.error('[ProvidersStore] Erreur update SMS config:', error);
+      set({ loadingSms: false });
+      throw error;
+    }
+  },
+
+  validateSenderId: async (label: string): Promise<ValidateSenderResult> => {
+    try {
+      const response: any = await apiClient.post('/settings/sms/validate-sender', {
+        sms_sender_label: label
+      });
+      console.log('[ProvidersStore] Sender ID validated:', response.suggested_id);
+      return {
+        suggested_id: response.suggested_id,
+        is_available: response.is_available,
+        base_id: response.base_id,
+        alternatives: response.alternatives || []
+      };
+    } catch (error: any) {
+      console.error('[ProvidersStore] Erreur validation sender ID:', error);
+      throw error;
+    }
   }
 }));
