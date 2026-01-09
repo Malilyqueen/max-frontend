@@ -27,7 +27,8 @@ export function SettingsPage() {
   // Fetch providers au mount
   useEffect(() => {
     fetchProviders();
-  }, [fetchProviders]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Run only once on mount
 
   // Calculer les badges d'état pour les tabs
   const emailConfigured = isChannelConfigured('email');

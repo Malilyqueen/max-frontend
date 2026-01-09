@@ -29,11 +29,6 @@ export function EmailProvidersPanel() {
   const emailProviders = getProvidersByChannel(providers, 'email');
   const hasCustomProvider = emailProviders.length > 0;
 
-  useEffect(() => {
-    fetchProviders();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Run only once on mount
-
   // Si le tenant a un provider custom, passer en mode self-service
   useEffect(() => {
     if (hasCustomProvider) {
