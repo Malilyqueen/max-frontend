@@ -41,7 +41,7 @@ export function WhatsAppProPanel() {
     const checkWhatsAppEnabled = async () => {
       try {
         const response = await api.get('/settings/features');
-        setWhatsappEnabled(response.data.whatsapp_enabled || false);
+        setWhatsappEnabled(response.whatsapp_enabled || false);
       } catch (error) {
         console.error('[WhatsApp Pro] Erreur vérification feature flag:', error);
         setWhatsappEnabled(false);
@@ -84,13 +84,13 @@ export function WhatsAppProPanel() {
         // Pas de credentials envoyés - backend gère tout
       });
 
-      if (!response.data.ok) {
-        throw new Error(response.data.error || 'Erreur génération QR');
+      if (!response.ok) {
+        throw new Error(response.error || 'Erreur génération QR');
       }
 
       setStatus(prev => ({
         ...prev,
-        qrCode: response.data.qrCode,
+        qrCode: response.qrCode,
         loading: false
       }));
 
@@ -119,11 +119,11 @@ export function WhatsAppProPanel() {
       try {
         const response = await api.get('/wa/qr/status');
 
-        if (response.data.connected) {
+        if (response.connected) {
           stopPolling();
           setStatus({
             connected: true,
-            phoneNumber: response.data.phoneNumber,
+            phoneNumber: response.phoneNumber,
             loading: false
           });
           await fetchProviders(); // Refresh providers list
@@ -183,10 +183,10 @@ export function WhatsAppProPanel() {
         message: '🎉 Test WhatsApp Pro envoyé depuis MAX CRM!'
       });
 
-      if (response.data.ok) {
+      if (response.ok) {
         toast.success('Message de test envoyé avec succès!');
       } else {
-        toast.error('Échec envoi: ' + response.data.error);
+        toast.error('Échec envoi: ' + response.error);
       }
     } catch (error: any) {
       console.error('[WhatsApp Pro] Erreur test:', error);
