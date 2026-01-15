@@ -171,26 +171,24 @@ export function WhatsAppProPanel() {
   };
 
   /**
-   * Envoyer message de test
+   * Envoyer message de test au numéro connecté
    */
   const handleSendTest = async () => {
-    const phoneNumber = prompt('Numéro de téléphone (format: +33612345678):');
-    if (!phoneNumber) return;
+    setStatus(prev => ({ ...prev, loading: true }));
 
     try {
-      const response = await api.post('/wa/send-test', {
-        to: phoneNumber,
-        message: '🎉 Test WhatsApp Pro envoyé depuis MAX CRM!'
-      });
+      const response = await api.post('/wa/test');
 
-      if (response.ok) {
-        toast.success('Message de test envoyé avec succès!');
-      } else {
-        toast.error('Échec envoi: ' + response.error);
+      if (!response.ok) {
+        throw new Error(response.error || 'Erreur envoi message');
       }
+
+      toast.success(`✅ Message test envoyé à ${response.phoneNumber}! Vérifiez votre téléphone WhatsApp.`);
     } catch (error: any) {
       console.error('[WhatsApp Pro] Erreur test:', error);
-      toast.error('Impossible d\'envoyer le message de test');
+      toast.error(error.response?.data?.error || error.message || 'Impossible d\'envoyer le message test');
+    } finally {
+      setStatus(prev => ({ ...prev, loading: false }));
     }
   };
 
