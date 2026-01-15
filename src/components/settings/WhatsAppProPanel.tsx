@@ -40,7 +40,7 @@ export function WhatsAppProPanel() {
   useEffect(() => {
     const checkWhatsAppEnabled = async () => {
       try {
-        const response = await api.get('/api/settings/features');
+        const response = await api.get('/settings/features');
         setWhatsappEnabled(response.data.whatsapp_enabled || false);
       } catch (error) {
         console.error('[WhatsApp Pro] Erreur vérification feature flag:', error);
@@ -80,7 +80,7 @@ export function WhatsAppProPanel() {
     try {
       // Appeler l'API backend pour obtenir QR code
       // L'API backend génère instanceId/token en interne (invisible client)
-      const response = await api.post('/api/wa/qr/generate', {
+      const response = await api.post('/wa/qr/generate', {
         // Pas de credentials envoyés - backend gère tout
       });
 
@@ -117,7 +117,7 @@ export function WhatsAppProPanel() {
 
     pollingIntervalRef.current = setInterval(async () => {
       try {
-        const response = await api.get('/api/wa/qr/status');
+        const response = await api.get('/wa/qr/status');
 
         if (response.data.connected) {
           stopPolling();
@@ -154,7 +154,7 @@ export function WhatsAppProPanel() {
     setStatus(prev => ({ ...prev, loading: true }));
 
     try {
-      await api.post('/api/wa/disconnect');
+      await api.post('/wa/disconnect');
 
       setStatus({
         connected: false,
@@ -178,7 +178,7 @@ export function WhatsAppProPanel() {
     if (!phoneNumber) return;
 
     try {
-      const response = await api.post('/api/wa/send-test', {
+      const response = await api.post('/wa/send-test', {
         to: phoneNumber,
         message: '🎉 Test WhatsApp Pro envoyé depuis MAX CRM!'
       });
