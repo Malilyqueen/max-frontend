@@ -146,11 +146,11 @@ export const PROVIDER_METADATA: Record<ProviderType, ProviderMetadata> = {
   },
   greenapi_whatsapp: {
     type: 'greenapi_whatsapp',
-    name: 'Green-API WhatsApp',
-    icon: '💚',
-    description: 'WhatsApp via Green-API (facile à configurer)',
+    name: 'WhatsApp Pro',
+    icon: '💬',
+    description: 'Connectez votre WhatsApp professionnel à MAX CRM',
     channel: 'whatsapp',
-    docsUrl: 'https://green-api.com/docs/',
+    docsUrl: 'https://docs.studiomacrea.cloud/whatsapp', // Docs internes
     recommended: true
   }
 };

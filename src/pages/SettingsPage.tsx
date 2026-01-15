@@ -9,7 +9,7 @@ import { useProvidersStore } from '../stores/useProvidersStore';
 import { RecommendationCard } from '../components/settings/RecommendationCard';
 import { EmailProvidersPanel } from '../components/settings/EmailProvidersPanel';
 import { SmsProvidersPanel } from '../components/settings/SmsProvidersPanel';
-import { WhatsappProvidersPanel } from '../components/settings/WhatsappProvidersPanel';
+import { WhatsAppProPanel } from '../components/settings/WhatsAppProPanel';
 
 type TabValue = 'email' | 'sms' | 'whatsapp';
 
@@ -144,7 +144,7 @@ export function SettingsPage() {
 
             {!loading && activeTab === 'email' && <EmailProvidersPanel />}
             {!loading && activeTab === 'sms' && <SmsProvidersPanel />}
-            {!loading && activeTab === 'whatsapp' && <WhatsappProvidersPanel />}
+            {!loading && activeTab === 'whatsapp' && <WhatsAppProPanel />}
           </div>
         </div>
 
