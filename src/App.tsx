@@ -6,6 +6,7 @@
 import { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { LoginPage } from './pages/LoginPage';
+import { SignupPage } from './pages/SignupPage';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { AppShellSimple as AppShell } from './pages/AppShellSimple';
 import { DashboardPage } from './pages/DashboardPage';
@@ -26,6 +27,7 @@ const SettingsPage = lazy(() => import('./pages/SettingsPage').then(m => ({ defa
 const SupportPage = lazy(() => import('./pages/SupportPage').then(m => ({ default: m.SupportPage })));
 const TicketDetailPage = lazy(() => import('./pages/TicketDetailPage').then(m => ({ default: m.TicketDetailPage })));
 const AdminSupportPage = lazy(() => import('./pages/AdminSupportPage').then(m => ({ default: m.AdminSupportPage })));
+const CampaignDetailPage = lazy(() => import('./pages/CampaignDetailPage').then(m => ({ default: m.CampaignDetailPage })));
 
 // Loading fallback component
 const PageLoader = () => (
@@ -40,8 +42,9 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Route publique: Login */}
+        {/* Routes publiques */}
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
 
         {/* Routes protégées */}
         <Route element={<ProtectedRoute />}>
@@ -66,6 +69,16 @@ export default function App() {
             <Route path="/campagnes" element={
               <Suspense fallback={<PageLoader />}>
                 <CampaignsPage />
+              </Suspense>
+            } />
+            <Route path="/campagnes/:id" element={
+              <Suspense fallback={<PageLoader />}>
+                <CampaignDetailPage />
+              </Suspense>
+            } />
+            <Route path="/campaigns/:id" element={
+              <Suspense fallback={<PageLoader />}>
+                <CampaignDetailPage />
               </Suspense>
             } />
             <Route path="/settings/integrations" element={

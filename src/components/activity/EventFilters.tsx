@@ -3,7 +3,7 @@
  * Filtres pour le dashboard d'activité (période, canal, statut, recherche)
  */
 
-import React, { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Search, Calendar, Filter, X, Mail, MessageSquare, Smartphone } from 'lucide-react';
 import type { EventFilters, Channel, EventStatus, Direction } from '../../types/events';
 import { CHANNEL_CONFIGS, STATUS_CONFIGS } from '../../types/events';
@@ -16,6 +16,46 @@ interface EventFiltersProps {
 
 export function EventFiltersComponent({ filters, onFiltersChange, onClearFilters }: EventFiltersProps) {
   const [showAdvanced, setShowAdvanced] = useState(false);
+
+  // Local search state for debounce
+  const [localSearch, setLocalSearch] = useState(filters.search || '');
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isInitialMount = useRef(true);
+
+  // Sync local search with filters.search when it changes externally (e.g., URL restore)
+  useEffect(() => {
+    if (filters.search !== localSearch && !isInitialMount.current) {
+      setLocalSearch(filters.search || '');
+    }
+    isInitialMount.current = false;
+  }, [filters.search]);
+
+  // Debounced search - only trigger API call after 400ms of no typing
+  useEffect(() => {
+    // Clear previous timer
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+
+    // Skip on initial mount
+    if (isInitialMount.current) {
+      return;
+    }
+
+    // Set new timer
+    debounceTimerRef.current = setTimeout(() => {
+      const trimmedSearch = localSearch.trim();
+      if (trimmedSearch !== (filters.search || '')) {
+        onFiltersChange({ search: trimmedSearch || undefined });
+      }
+    }, 400);
+
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, [localSearch]);
 
   // Period presets
   const periodPresets = [
@@ -82,19 +122,14 @@ export function EventFiltersComponent({ filters, onFiltersChange, onClearFilters
     onFiltersChange({ direction });
   };
 
-  // Handle search
-  const handleSearchChange = (search: string) => {
-    onFiltersChange({ search: search.trim() || undefined });
-  };
-
   // Count active filters
-  const activeFiltersCount = [
-    filters.channel?.length,
-    filters.status?.length,
+  const activeFiltersCount: number = [
+    filters.channel?.length || 0,
+    filters.status?.length || 0,
     filters.direction ? 1 : 0,
     filters.search ? 1 : 0,
     filters.startDate || filters.endDate ? 1 : 0
-  ].reduce((sum, count) => sum + (count || 0), 0);
+  ].reduce((sum, count) => sum + count, 0);
 
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-6 space-y-6">
@@ -121,14 +156,14 @@ export function EventFiltersComponent({ filters, onFiltersChange, onClearFilters
         )}
       </div>
 
-      {/* Search */}
+      {/* Search - uses local state with debounce */}
       <div className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
         <input
           type="text"
           placeholder="Rechercher par email ou numéro de téléphone..."
-          value={filters.search || ''}
-          onChange={(e) => handleSearchChange(e.target.value)}
+          value={localSearch}
+          onChange={(e) => setLocalSearch(e.target.value)}
           className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition-colors"
         />
       </div>
@@ -171,13 +206,12 @@ export function EventFiltersComponent({ filters, onFiltersChange, onClearFilters
                 onClick={() => handleChannelToggle(channel)}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                   isActive
-                    ? 'ring-2 ring-offset-2'
+                    ? 'ring-2 ring-offset-2 ring-current'
                     : 'opacity-60 hover:opacity-100'
                 }`}
                 style={{
                   backgroundColor: isActive ? config.bgColor : '#f3f4f6',
-                  color: isActive ? config.color : '#6b7280',
-                  ringColor: isActive ? config.color : undefined
+                  color: isActive ? config.color : '#6b7280'
                 }}
               >
                 <Icon className="w-4 h-4" />
@@ -249,13 +283,12 @@ export function EventFiltersComponent({ filters, onFiltersChange, onClearFilters
                     onClick={() => handleStatusToggle(status)}
                     className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all ${
                       isActive
-                        ? 'ring-2 ring-offset-2 font-medium'
+                        ? 'ring-2 ring-offset-2 ring-current font-medium'
                         : 'opacity-60 hover:opacity-100'
                     }`}
                     style={{
                       backgroundColor: isActive ? `${config.color}20` : '#f3f4f6',
-                      color: isActive ? config.color : '#6b7280',
-                      ringColor: isActive ? config.color : undefined
+                      color: isActive ? config.color : '#6b7280'
                     }}
                   >
                     <span>{config.emoji}</span>
