@@ -2,20 +2,20 @@
  * components/ProtectedRoute.tsx
  * HOC pour proteger les routes necessitant authentification
  *
- * REGLE PRODUIT:
- * - Admin (role === 'admin' && tenantId === 'macrea') : acces complet
- * - Client (isProvisioned === false) : affiche CreateCrmGate, bloque acces CRM
- * - Client (isProvisioned === true) : acces normal au dashboard
+ * REGLE PRODUIT V1:
+ * - Dashboard MAX : accessible a tous les tenants (Campagnes, Activite, KPIs, Settings)
+ * - Tour de controle (CRM) : gate si crm non provisionne (gere dans CrmPage)
+ *
+ * Ce composant ne gere QUE l'authentification, pas le gate CRM
  */
 
 import React, { useEffect } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuthStore } from '../stores/useAuthStore';
 import { LoadingSpinner } from './common/LoadingSpinner';
-import { CreateCrmGate } from './CreateCrmGate';
 
 export const ProtectedRoute: React.FC = () => {
-  const { isAuthenticated, checkAuth, isLoading, user } = useAuthStore();
+  const { isAuthenticated, checkAuth, isLoading } = useAuthStore();
 
   // Verifier l'auth SEULEMENT au mount initial (pas a chaque navigation)
   useEffect(() => {
@@ -27,7 +27,6 @@ export const ProtectedRoute: React.FC = () => {
   }, []); // Array vide = seulement au mount
 
   // Loading state SEULEMENT si on n'est pas encore authentifie
-  // Si deja authentifie, on laisse naviguer meme pendant le refresh du token
   if (isLoading && !isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -41,16 +40,8 @@ export const ProtectedRoute: React.FC = () => {
     return <Navigate to="/login" replace />;
   }
 
-  // Determiner si l'utilisateur est admin MaCrea
-  const isAdmin = user?.role === 'admin' && user?.tenantId === 'macrea';
-
-  // REGLE: Si client (pas admin) et CRM non provisionne -> CreateCrmGate
-  // Les admins ont toujours acces (pour la tour de controle)
-  if (user && !isAdmin && user.isProvisioned === false) {
-    return <CreateCrmGate />;
-  }
-
-  // Si authentifie (ou en cours de verification mais deja auth), render les routes enfants
+  // Authentifie -> render les routes enfants
+  // Le gate CRM est gere dans CrmPage uniquement
   return <Outlet />;
 };
 
