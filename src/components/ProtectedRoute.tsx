@@ -1,18 +1,21 @@
 /**
  * components/ProtectedRoute.tsx
  * HOC pour proteger les routes necessitant authentification
- * Redirige vers CrmSetupPage si tenant non provisionne
+ *
+ * REGLE PRODUIT:
+ * - Admin (role === 'admin' && tenantId === 'macrea') : acces complet
+ * - Client (isProvisioned === false) : affiche CreateCrmGate, bloque acces CRM
+ * - Client (isProvisioned === true) : acces normal au dashboard
  */
 
 import React, { useEffect } from 'react';
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 import { useAuthStore } from '../stores/useAuthStore';
 import { LoadingSpinner } from './common/LoadingSpinner';
-import { CrmSetupPage } from '../pages/CrmSetupPage';
+import { CreateCrmGate } from './CreateCrmGate';
 
 export const ProtectedRoute: React.FC = () => {
   const { isAuthenticated, checkAuth, isLoading, user } = useAuthStore();
-  const location = useLocation();
 
   // Verifier l'auth SEULEMENT au mount initial (pas a chaque navigation)
   useEffect(() => {
@@ -38,10 +41,13 @@ export const ProtectedRoute: React.FC = () => {
     return <Navigate to="/login" replace />;
   }
 
-  // Si authentifie MAIS tenant non provisionne, afficher page de setup
-  // Exception: permettre l'acces a /settings pour configurer
-  if (user && user.isProvisioned === false && !location.pathname.startsWith('/settings')) {
-    return <CrmSetupPage />;
+  // Determiner si l'utilisateur est admin MaCrea
+  const isAdmin = user?.role === 'admin' && user?.tenantId === 'macrea';
+
+  // REGLE: Si client (pas admin) et CRM non provisionne -> CreateCrmGate
+  // Les admins ont toujours acces (pour la tour de controle)
+  if (user && !isAdmin && user.isProvisioned === false) {
+    return <CreateCrmGate />;
   }
 
   // Si authentifie (ou en cours de verification mais deja auth), render les routes enfants
