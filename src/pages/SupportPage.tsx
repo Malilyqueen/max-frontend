@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Ticket, CircleDot, MessageCircle, CheckCircle, AlertCircle, Lightbulb, PlusCircle } from 'lucide-react';
+import { Ticket, CircleDot, MessageCircle, CheckCircle, AlertCircle, Lightbulb, PlusCircle, HelpCircle, ChevronDown, ChevronUp, Bot, Zap, Settings, Users } from 'lucide-react';
 import { apiClient } from '../api/client';
 
 interface Ticket {
@@ -83,6 +83,9 @@ export function SupportPage() {
             <div className="text-sm text-gray-600 flex items-center gap-1"><CheckCircle className="w-4 h-4" /> Fermés</div>
           </div>
         </div>
+
+        {/* FAQ Section */}
+        <FAQSection />
 
         {/* Filtres */}
         <div className="bg-white rounded-lg p-4 shadow mb-6">
@@ -207,6 +210,121 @@ export function SupportPage() {
           }}
         />
       )}
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// FAQ SECTION - Guide utilisateur M.A.X.
+// ═══════════════════════════════════════════════════════════════════
+
+function FAQSection() {
+  const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
+
+  const faqs = [
+    {
+      icon: <Bot className="w-5 h-5 text-cyan-500" />,
+      question: "Comment créer un lead avec M.A.X. ?",
+      answer: `Dites simplement à M.A.X. ce que vous voulez créer :
+
+• "Crée un lead pour Jean Dupont, email jean@exemple.com, secteur Consulting"
+• "Ajoute un nouveau contact : Marie Martin, tél 06 12 34 56 78, WhatsApp préféré"
+
+M.A.X. gère automatiquement les détails techniques. S'il manque des informations, il vous les demandera.`
+    },
+    {
+      icon: <Zap className="w-5 h-5 text-yellow-500" />,
+      question: "M.A.X. bloque sur un secteur d'activité inconnu",
+      answer: `Si M.A.X. ne crée pas un lead à cause d'un secteur non reconnu, dites-lui :
+
+• "Utilise l'outil add_enum_option pour ajouter ce secteur, puis crée le lead"
+• Ou simplement : "Ajoute 'Consulting' comme secteur puis crée le lead"
+
+M.A.X. a les droits administrateur pour ajouter de nouvelles valeurs au CRM.`
+    },
+    {
+      icon: <Settings className="w-5 h-5 text-violet-500" />,
+      question: "Quels outils M.A.X. peut-il utiliser ?",
+      answer: `M.A.X. dispose de nombreux outils CRM :
+
+📋 Gestion leads : rechercher, créer, modifier, enrichir automatiquement
+🔧 Configuration : ajouter des champs, modifier les layouts (avec votre accord)
+📧 Communication : envoyer WhatsApp, emails
+📊 Analyse : statistiques, rapports, recommandations
+
+Si M.A.X. ne fait pas quelque chose automatiquement, vous pouvez lui demander d'utiliser un outil spécifique.`
+    },
+    {
+      icon: <Users className="w-5 h-5 text-green-500" />,
+      question: "Comment enrichir tous mes leads automatiquement ?",
+      answer: `Demandez simplement :
+
+• "Enrichis tous les leads qui n'ont pas de secteur"
+• "Analyse et qualifie mes 10 derniers leads"
+• "Ajoute des tags intelligents à tous mes contacts"
+
+M.A.X. utilise l'IA pour analyser les emails, noms et descriptions, puis enrichit automatiquement chaque lead.`
+    },
+    {
+      icon: <HelpCircle className="w-5 h-5 text-blue-500" />,
+      question: "Que faire si M.A.X. ne comprend pas ma demande ?",
+      answer: `Quelques astuces :
+
+1. Soyez spécifique : "Crée un lead avec prénom Jean, nom Dupont" plutôt que "ajoute Jean"
+2. Mentionnez les outils : "Utilise query_espo_leads pour trouver..."
+3. Donnez le contexte : "Dans le CRM, je veux..."
+
+Si le problème persiste, créez un ticket support avec le message exact que vous avez envoyé à M.A.X.`
+    }
+  ];
+
+  return (
+    <div className="bg-gradient-to-br from-cyan-50 to-violet-50 rounded-xl p-6 mb-6 border border-cyan-200">
+      <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+        <HelpCircle className="w-6 h-6 text-cyan-600" />
+        Guide M.A.X. - Questions fréquentes
+      </h2>
+      <p className="text-gray-600 mb-4 text-sm">
+        Avant de créer un ticket, consultez ces astuces pour mieux utiliser M.A.X.
+      </p>
+
+      <div className="space-y-3">
+        {faqs.map((faq, index) => (
+          <div
+            key={index}
+            className="bg-white rounded-lg border border-gray-200 overflow-hidden transition-all"
+          >
+            <button
+              onClick={() => setExpandedFaq(expandedFaq === index ? null : index)}
+              className="w-full px-4 py-3 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                {faq.icon}
+                <span className="font-medium text-gray-900">{faq.question}</span>
+              </div>
+              {expandedFaq === index ? (
+                <ChevronUp className="w-5 h-5 text-gray-400" />
+              ) : (
+                <ChevronDown className="w-5 h-5 text-gray-400" />
+              )}
+            </button>
+            {expandedFaq === index && (
+              <div className="px-4 pb-4 pt-0">
+                <div className="bg-gray-50 rounded-lg p-4 text-sm text-gray-700 whitespace-pre-line">
+                  {faq.answer}
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-4 p-3 bg-cyan-100 rounded-lg border border-cyan-200">
+        <p className="text-sm text-cyan-800 flex items-center gap-2">
+          <Lightbulb className="w-4 h-4" />
+          <strong>Astuce :</strong> M.A.X. apprend de vos retours ! Si une commande ne fonctionne pas comme prévu, décrivez ce que vous attendiez dans votre ticket.
+        </p>
+      </div>
     </div>
   );
 }
