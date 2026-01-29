@@ -11,7 +11,7 @@ const isProduction = typeof window !== 'undefined' && (
 
 // URLs API
 export const API_BASE_URL = isProduction
-  ? 'https://max-api.studiomacrea.cloud'
+  ? 'https://max.studiomacrea.cloud'
   : (import.meta.env.VITE_API_URL || 'http://localhost:3005');
 
 export const ESPO_BASE_URL = isProduction
