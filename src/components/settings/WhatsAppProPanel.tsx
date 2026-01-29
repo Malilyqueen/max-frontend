@@ -59,19 +59,35 @@ export function WhatsAppProPanel() {
     loadBilling();
   }, [loadBilling]);
 
-  // Vérifier si WhatsApp est déjà connecté
+  // Vérifier si WhatsApp est déjà connecté et récupérer le numéro réel
   useEffect(() => {
-    const whatsappProvider = providers.find(
-      p => p.provider_type === 'greenapi_whatsapp' && p.is_active
-    );
+    const checkWhatsAppStatus = async () => {
+      const whatsappProvider = providers.find(
+        p => p.provider_type === 'greenapi_whatsapp' && p.is_active
+      );
 
-    if (whatsappProvider) {
-      setStatus(prev => ({
-        ...prev,
-        connected: true,
-        phoneNumber: 'Connecté' // TODO: Récupérer numéro réel depuis API
-      }));
-    }
+      if (whatsappProvider) {
+        try {
+          // Récupérer le statut réel depuis l'API pour obtenir le numéro
+          const response = await api.get('/wa/qr/status');
+          setStatus(prev => ({
+            ...prev,
+            connected: response.connected || true,
+            phoneNumber: response.phoneNumber || 'Connecté'
+          }));
+        } catch (error) {
+          // Si l'API échoue, afficher "Connecté" comme fallback
+          console.warn('[WhatsApp Pro] Impossible de récupérer le numéro:', error);
+          setStatus(prev => ({
+            ...prev,
+            connected: true,
+            phoneNumber: 'Connecté'
+          }));
+        }
+      }
+    };
+
+    checkWhatsAppStatus();
   }, [providers]);
 
   /**

@@ -5,6 +5,7 @@
 
 import axios, { AxiosInstance, AxiosError } from 'axios';
 import { API_BASE_URL as BASE_URL } from '../config/api';
+import { useAuthStore } from '../stores/useAuthStore';
 
 const API_BASE_URL = `${BASE_URL}/api`;
 
@@ -20,8 +21,7 @@ export const apiClient: AxiosInstance = axios.create({
 // Intercepteur REQUEST: Ajouter token + tenant depuis authStore (PAS settings)
 apiClient.interceptors.request.use(
   (config) => {
-    // Import dynamique pour éviter circular dependency
-    const { useAuthStore } = require('../stores/useAuthStore');
+    // Lire directement depuis le store Zustand (pas de require, ESM compatible)
     const authState = useAuthStore.getState();
 
     const token = authState.token;

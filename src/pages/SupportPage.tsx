@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Ticket, CircleDot, MessageCircle, CheckCircle, AlertCircle, Lightbulb, PlusCircle } from 'lucide-react';
 import { apiClient } from '../api/client';
 
 interface Ticket {
@@ -56,7 +57,7 @@ export function SupportPage() {
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">🎫 Support Client</h1>
+            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2"><Ticket className="w-8 h-8" /> Support Client</h1>
             <p className="text-gray-600 mt-1">Gérez vos demandes d'assistance</p>
           </div>
           <button
@@ -71,15 +72,15 @@ export function SupportPage() {
         <div className="grid grid-cols-3 gap-4 mb-6">
           <div className="bg-white rounded-lg p-4 shadow">
             <div className="text-2xl font-bold text-green-600">{stats.open}</div>
-            <div className="text-sm text-gray-600">🟢 Ouverts</div>
+            <div className="text-sm text-gray-600 flex items-center gap-1"><CircleDot className="w-4 h-4 text-green-500" /> Ouverts</div>
           </div>
           <div className="bg-white rounded-lg p-4 shadow">
             <div className="text-2xl font-bold text-blue-600">{stats.replied}</div>
-            <div className="text-sm text-gray-600">💬 Répondus</div>
+            <div className="text-sm text-gray-600 flex items-center gap-1"><MessageCircle className="w-4 h-4" /> Répondus</div>
           </div>
           <div className="bg-white rounded-lg p-4 shadow">
             <div className="text-2xl font-bold text-gray-600">{stats.closed}</div>
-            <div className="text-sm text-gray-600">✅ Fermés</div>
+            <div className="text-sm text-gray-600 flex items-center gap-1"><CheckCircle className="w-4 h-4" /> Fermés</div>
           </div>
         </div>
 
@@ -150,12 +151,12 @@ export function SupportPage() {
                           {ticket.ticket_number}
                         </span>
                         {ticket.priority === 'urgent' && (
-                          <span className="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-semibold">
-                            🔴 URGENT
+                          <span className="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-semibold flex items-center gap-1">
+                            <AlertCircle className="w-3 h-3" /> URGENT
                           </span>
                         )}
                         <span
-                          className={`px-2 py-1 rounded text-xs font-semibold ${
+                          className={`px-2 py-1 rounded text-xs font-semibold flex items-center gap-1 ${
                             ticket.status === 'open'
                               ? 'bg-green-100 text-green-700'
                               : ticket.status === 'replied'
@@ -164,10 +165,10 @@ export function SupportPage() {
                           }`}
                         >
                           {ticket.status === 'open'
-                            ? '🟢 Ouvert'
+                            ? <><CircleDot className="w-3 h-3" /> Ouvert</>
                             : ticket.status === 'replied'
-                            ? '💬 Répondu'
-                            : '✅ Fermé'}
+                            ? <><MessageCircle className="w-3 h-3" /> Répondu</>
+                            : <><CheckCircle className="w-3 h-3" /> Fermé</>}
                         </span>
                       </div>
                       <h3 className="font-semibold text-gray-900 mb-1">
@@ -250,7 +251,7 @@ function CreateTicketModal({ onClose, onSuccess }: CreateTicketModalProps) {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">🆕 Nouveau Ticket Support</h2>
+        <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2"><PlusCircle className="w-6 h-6" /> Nouveau Ticket Support</h2>
 
         <form onSubmit={handleSubmit}>
           {/* Priorité */}
@@ -268,7 +269,7 @@ function CreateTicketModal({ onClose, onSuccess }: CreateTicketModalProps) {
                   onChange={(e) => setPriority(e.target.value as 'normal')}
                   className="mr-2"
                 />
-                <span className="text-sm text-gray-900">🟡 Normale - Gêne mais contournable</span>
+                <span className="text-sm text-gray-900 flex items-center gap-1"><CircleDot className="w-4 h-4 text-yellow-500" /> Normale - Gêne mais contournable</span>
               </label>
               <label className="flex items-center cursor-pointer">
                 <input
@@ -279,7 +280,7 @@ function CreateTicketModal({ onClose, onSuccess }: CreateTicketModalProps) {
                   onChange={(e) => setPriority(e.target.value as 'urgent')}
                   className="mr-2"
                 />
-                <span className="text-sm text-gray-900">🔴 Urgente - Service bloqué</span>
+                <span className="text-sm text-gray-900 flex items-center gap-1"><AlertCircle className="w-4 h-4 text-red-500" /> Urgente - Service bloqué</span>
               </label>
             </div>
           </div>
@@ -313,8 +314,8 @@ function CreateTicketModal({ onClose, onSuccess }: CreateTicketModalProps) {
               rows={8}
               required
             />
-            <p className="text-xs text-gray-500 mt-1">
-              💡 Astuce : Incluez les messages d'erreur et étapes pour reproduire le problème.
+            <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
+              <Lightbulb className="w-3 h-3" /> Astuce : Incluez les messages d'erreur et étapes pour reproduire le problème.
             </p>
           </div>
 
@@ -333,7 +334,7 @@ function CreateTicketModal({ onClose, onSuccess }: CreateTicketModalProps) {
               disabled={submitting}
               className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors disabled:opacity-50"
             >
-              {submitting ? 'Création en cours...' : '✅ Créer le Ticket'}
+              {submitting ? 'Création en cours...' : <><CheckCircle className="w-4 h-4 inline mr-1" /> Créer le Ticket</>}
             </button>
           </div>
         </form>
